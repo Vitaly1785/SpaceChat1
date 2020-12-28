@@ -1,5 +1,7 @@
 package server;
 
+import connect.SpaceRepository;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -81,6 +83,21 @@ public class ClientHandler {
                                         continue;
                                     }
                                     server.SimpleMsg(this, token[1], token[2]);
+                                }
+                                if(str.startsWith("/changeNick")){
+                                    String newNick = str.split("\\s", 2)[1];
+                                    if(newNick.contains(" ")){
+                                        sendMessage("the new name cannot contain spaces");
+                                        continue;
+                                    }
+                                    if(server.getAuthService().changeNickname(this.nickname, newNick)){
+                                        this.nickname = newNick;
+                                        sendMessage("/changeNick" + nickname);
+                                        sendMessage("Name changed");
+                                        server.broadCastClientList();
+                                    } else{
+                                        sendMessage("the name is already taken");
+                                    }
                                 }
                             } else{
                                 server.broadCastMsg(this,str);
