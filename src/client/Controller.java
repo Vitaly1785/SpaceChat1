@@ -1,5 +1,6 @@
 package client;
 
+import connect.SpaceRepository;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,6 +25,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.Timer;
 
@@ -42,6 +44,8 @@ public class Controller implements Initializable {
     private HBox msgPanel;
     @FXML
     private ListView<String> clientList;
+    @FXML
+    private TextField nicknameField;
 
     private Socket socket;
     private final String IP_ADRESS = "localhost";
@@ -148,6 +152,10 @@ public class Controller implements Initializable {
                                 });
                             }
 
+                            if (str.startsWith("/changeNick ")) {
+                                nickname = str.split("\\s")[1];
+                            }
+
                             if (str.equals("/end")) {
                                 break;
                             }
@@ -242,15 +250,17 @@ public class Controller implements Initializable {
         regStage.show();
     }
 
-    public void tryToReg(String login, String password, String nickname) {
+    public boolean tryToReg(String login, String password, String nickname)  {
         String msg = String.format("/reg %s %s %s", login, password, nickname);
+
         if (socket == null || socket.isClosed()) {
             connect();
         }
-        try {
+        try{
             out.writeUTF(msg);
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
+        return true;
     }
 }

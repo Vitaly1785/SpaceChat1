@@ -1,5 +1,5 @@
 package server;
-
+/*
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,4 +47,4 @@ public class SimpleAuthService implements AuthService {
         users.add(new UserData(login, password,nickname));
         return true;
     }
-}
+}*/
