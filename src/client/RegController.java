@@ -45,7 +45,7 @@ public class RegController {
         String nickname = nicknameField.getText().trim();
         controller.tryToReg(login, password, nickname);
 
-        repository.createUsers(login,password,nickname);
+      //  repository.createUsers(login,password,nickname);
     }
 
     public void addMessage(String msg) {
