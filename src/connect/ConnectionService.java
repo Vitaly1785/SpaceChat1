@@ -1,10 +1,14 @@
 package connect;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
+import server.AuthService;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionService {
-    private ConnectionService() {}
+    private ConnectionService() {
+    }
 
     public static Connection connect() {
         try {
@@ -15,6 +19,9 @@ public class ConnectionService {
     }
 
     public static void rollback(Connection connection) {
+        if(connection == null){
+            return;
+        }
         try {
             connection.rollback();
         } catch (SQLException throwables) {
@@ -23,6 +30,9 @@ public class ConnectionService {
     }
 
     public static void close(Connection connection) {
+        if(connection == null){
+            return;
+        }
         try {
             connection.close();
         } catch (SQLException throwables) {
@@ -30,14 +40,6 @@ public class ConnectionService {
         }
     }
 
-
-   /* Connection connection;
-
-    public Connection getConnection() throws ClassNotFoundException, SQLException{
-        String connectionString = "jdbc:mysql://" + host + ":" + port + "/" + name + "?" + "serverTimezone=Europe/Moscow";
-        connection = DriverManager.getConnection(connectionString, user, password);
-
-        return connection;*/
-    }
+}
 
 
