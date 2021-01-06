@@ -1,6 +1,7 @@
 package client;
 
-import connect.SpaceRepository;
+
+import FileData.FileReadWrite;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,15 +20,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.Timer;
 
 public class Controller implements Initializable {
     @FXML
@@ -135,12 +131,26 @@ public class Controller implements Initializable {
                             }
                         } else {
                             textArea.appendText(str + "\n");
+
                         }
                     }
+
+
+                        try {
+                            FileReadWrite newFile = new FileReadWrite();
+                            String[] strings = newFile.readFileTxt(allChatMessage());
+                            for (int i = 0; i < strings.length; i++) {
+                                textArea.appendText(strings[i] + "\n");
+                            }
+                        }
+                        catch (Exception e) {
+                            throw new RuntimeException("SWW", e);
+                        }
 
                     // цикл работы
                     while (true) {
                         String str = in.readUTF();
+
                         if (str.startsWith("/")) {
                             if (str.startsWith("/clientList ")) {
                                 String[] token = str.split("\\s");
@@ -161,6 +171,13 @@ public class Controller implements Initializable {
                             }
                         } else {
                             textArea.appendText(str + "\n");
+                        try {
+                            FileReadWrite newFile = new FileReadWrite();
+                            newFile.doUserListWriter(chatUserMessage(), str);
+                            newFile.doChatWriter(allChatMessage(), str);
+                        } catch (Exception e) {
+                            throw new RuntimeException("SWW", e);
+                        }
                         }
                     }
                 } catch (EOFException e){
@@ -262,5 +279,13 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
         return true;
+    }
+    public File chatUserMessage(){
+        File file = new File("D:/ru.geekbrains/history_" + nickname + ".txt");
+        return file;
+    }
+    public File allChatMessage(){
+        File file = new File("D:/ru.geekbrains/history_SpaceChat.txt");
+        return file;
     }
 }
