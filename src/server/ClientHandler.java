@@ -1,7 +1,8 @@
 package server;
 
-import connect.SpaceRepository;
-import connect.Users;
+
+
+import FileData.FileReadWrite;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,9 +28,8 @@ public class ClientHandler {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
-            new Thread(() -> {
+            server.getServerExService().execute(() -> {
                 try {
-                    //
                     try{
                         socket.setSoTimeout(120000);
                         // цикл аутентификации
@@ -102,6 +102,13 @@ public class ClientHandler {
                                 }
                             } else{
                                 server.broadCastMsg(this,str);
+                                try {
+                                    FileReadWrite newFile = new FileReadWrite();
+                                    newFile.doUserListWriter(newFile.chatUserMessage(nickname), str);
+                                    newFile.doChatWriter(newFile.allChatMessage(), str);
+                                } catch (Exception e) {
+                                    throw new RuntimeException("SWW", e);
+                                }
 
                             }
                             //
@@ -123,7 +130,7 @@ public class ClientHandler {
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
